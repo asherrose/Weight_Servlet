@@ -55,9 +55,11 @@ public class Welcome extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		out.println("Welcome user, your weight history will be displayed in a graph");
 		String w = request.getParameter("weights");//get the weight entered
-		final String qAddWeight = "update stats set weights = concat(weights, ' ', " + w + ") where name='" + WeightServlet.n
+		String d = new SimpleDateFormat("MM-dd-yyyy").format(new Date());//get current date
+		final String qAddWeight = "update stats set weights = concat(weights, ' ', " + w + "), dates = concat(dates, ' ', '"
+		        + d + "') where name='" + WeightServlet.n
 		        + "';";
-		try {//add the new weight to the string of old weights in the database
+		try {//add the new weight, date to the string of old weights, dates in the database
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/weight", "root", "nyyin07");
 			pre = con.prepareStatement(qAddWeight);
@@ -77,6 +79,17 @@ public class Welcome extends HttpServlet {
 			intArray = new int[splitArray.length];
 			for (int i = 0; i < splitArray.length; i++) {//turn array of strings to array of ints
 				intArray[i] = Integer.parseInt(splitArray[i]);
+			}
+			String dateCheck = "select dates from stats where name='" + WeightServlet.n + "';";
+			pre3 = con.prepareStatement(dateCheck);
+			ResultSet r2 = pre3.executeQuery();
+			r2.next();
+			String res2 = r2.getString(1);
+			try {
+				dateSplit = res2.split("\\s+");//split string of dates into array
+			}
+			catch (PatternSyntaxException e) {
+				e.printStackTrace();
 			}
 			WeightLineChart.launch(WeightLineChart.class);//launch chart
 		}
