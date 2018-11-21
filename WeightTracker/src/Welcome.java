@@ -54,6 +54,7 @@ public class Welcome extends HttpServlet {
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		out.println("Welcome user, your weight history will be displayed in a graph");
+		out.flush();
 		String w = request.getParameter("weights");//get the weight entered
 		String d = new SimpleDateFormat("MM-dd-yyyy").format(new Date());//get current date
 		final String qAddWeight = "update stats set weights = concat(weights, ' ', " + w + "), dates = concat(dates, ' ', '"
